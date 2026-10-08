@@ -5,6 +5,7 @@ struct WelcomeTipView: View {
     let onShowGuide: () -> Void
 
     @AppStorage("hideWelcomeTip") private var hideWelcomeTip = false
+    @Environment(PurchaseManager.self) private var purchases
     @State private var dontShowAgain = false
     @Environment(\.dismiss) private var dismiss
 
@@ -27,6 +28,13 @@ struct WelcomeTipView: View {
             }
             .font(.title3)
             .multilineTextAlignment(.center)
+
+            if !purchases.isUnlocked {
+                Text("Free for \(PurchaseManager.trialDays) days, then \(purchases.priceText) once to keep using it. No subscription, no ads.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
 
             Button {
                 dontShowAgain.toggle()

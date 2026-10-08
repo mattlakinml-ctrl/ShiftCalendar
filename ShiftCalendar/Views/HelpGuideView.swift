@@ -49,7 +49,7 @@ struct HelpGuideView: View {
                 }
 
                 HelpStep(number: 6, title: "Write a note",
-                         text: "Tap the day and type in the Note box, e.g. \"Court\".\nA little speech bubble shows on that day so you don't forget.") {
+                         text: "Tap the day and type in the Note box, e.g. \"Court\".\nA little speech bubble shows on that day so you don't forget.\nKeep it simple: no case details or work secrets in notes.") {
                     MockWeek(codes: ["E", "L", "L"], noteIndex: 1)
                 }
 
