@@ -1,13 +1,13 @@
 import SwiftUI
 
 extension Rota {
-    static func newDraft(using store: AppStore) -> Rota {
+    static func newDraft(using store: ShiftStore) -> Rota {
         Rota(name: store.data.rotas.isEmpty ? "My rota" : "New rota", startDay: .today, blocks: [])
     }
 }
 
 struct RotaListView: View {
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @State private var editing: Rota?
     @State private var editingIsNew = false
 
@@ -66,7 +66,7 @@ struct RotaEditor: View {
     let isNew: Bool
     @State private var draft: Rota
 
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
     init(rota: Rota, isNew: Bool) {
@@ -198,7 +198,7 @@ private struct BlockRow: View {
 private struct CycleGrid: View {
     let cycle: [UUID]
     let startDay: DayKey
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 7)
 
@@ -237,7 +237,7 @@ private struct CycleGrid: View {
 /// A thin coloured bar summarising a cycle in the pattern list.
 private struct CycleStrip: View {
     let cycle: [UUID]
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
 
     var body: some View {
         HStack(spacing: 1) {
@@ -258,7 +258,7 @@ struct RotaTemplate: Identifiable {
 
     var id: String { name }
 
-    func blocks(using store: AppStore) -> [PatternBlock] {
+    func blocks(using store: ShiftStore) -> [PatternBlock] {
         parts.compactMap { code, days in
             guard let type = store.shiftType(code: code) ?? store.data.shiftTypes.first else { return nil }
             return PatternBlock(shiftTypeID: type.id, days: days)

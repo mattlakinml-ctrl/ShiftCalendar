@@ -3,7 +3,7 @@ import Observation
 
 /// Holds everything the user has set up and saves it to disk on every change.
 @Observable
-final class AppStore {
+final class ShiftStore {
     var data: AppData {
         didSet {
             engine = ShiftEngine(rotas: data.rotas, overrides: data.overrides)

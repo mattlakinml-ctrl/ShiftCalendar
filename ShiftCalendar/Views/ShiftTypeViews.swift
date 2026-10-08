@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShiftTypesView: View {
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @State private var editing: ShiftType?
     @State private var editingIsNew = false
     @State private var blockedDelete: ShiftType?
@@ -72,7 +72,7 @@ struct ShiftTypeEditor: View {
     let isNew: Bool
     @State private var draft: ShiftType
 
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
     private let swatches = [

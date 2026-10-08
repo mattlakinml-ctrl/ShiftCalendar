@@ -2,8 +2,10 @@ import SwiftUI
 
 /// The main screen: a continuous scroll of months, each day coloured by shift.
 struct CalendarScreen: View {
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @Environment(CalendarService.self) private var calendarService
+    @Environment(PurchaseManager.self) private var purchases
+    @AppStorage("hideWelcomeTip") private var hideWelcomeTip = false
 
     private let months = MonthKey.range(around: .today, before: 12, after: 60)
 
@@ -14,6 +16,9 @@ struct CalendarScreen: View {
     @State private var jumpDate = Date()
     @State private var pendingJump: DayKey?
     @State private var newRota: Rota?
+    @State private var showWelcome = false
+    @State private var showGuide = false
+    @State private var guideRequested = false
 
     var body: some View {
         NavigationStack {
@@ -74,6 +79,24 @@ struct CalendarScreen: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
+            .sheet(isPresented: $showWelcome, onDismiss: {
+                if guideRequested {
+                    guideRequested = false
+                    showGuide = true
+                }
+            }) {
+                WelcomeTipView { guideRequested = true }
+            }
+            .sheet(isPresented: $showGuide) {
+                NavigationStack {
+                    HelpGuideView()
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { showGuide = false }
+                            }
+                        }
+                }
+            }
             .sheet(item: $newRota) { rota in
                 RotaEditor(rota: rota, isNew: true)
             }
@@ -87,6 +110,7 @@ struct CalendarScreen: View {
                 jumpSheet
             }
             .task {
+                showWelcome = !hideWelcomeTip && purchases.hasAccess
                 calendarService.configure(
                     range: months.first!.firstDay...months.last!.lastDay,
                     hiddenCalendarIDs: store.data.hiddenCalendarIDs
@@ -165,7 +189,7 @@ private struct WeekdayHeader: View {
 
 /// Colour key across the top, so the codes always make sense at a glance.
 private struct LegendBar: View {
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -189,7 +213,7 @@ struct MonthView: View {
     let month: MonthKey
     let onSelect: (DayKey) -> Void
 
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @Environment(CalendarService.self) private var calendarService
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)

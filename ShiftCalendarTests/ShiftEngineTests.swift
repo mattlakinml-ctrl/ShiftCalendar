@@ -92,12 +92,12 @@ final class ShiftEngineTests: XCTestCase {
     func testStoreSavesAndReloads() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
         defer { try? FileManager.default.removeItem(at: url) }
-        let store = AppStore(fileURL: url)
+        let store = ShiftStore(fileURL: url)
         let e = store.data.shiftTypes[0]
         store.upsert(rota(DayKey(year: 2026, month: 1, day: 1), [(e, 6), (rest, 4)]))
         store.setNote("Court", on: DayKey(year: 2026, month: 2, day: 3))
 
-        let reloaded = AppStore(fileURL: url)
+        let reloaded = ShiftStore(fileURL: url)
         XCTAssertEqual(reloaded.data.rotas.count, 1)
         XCTAssertEqual(reloaded.data.overrides[DayKey(year: 2026, month: 2, day: 3)]?.note, "Court")
         XCTAssertEqual(reloaded.data.shiftTypes.count, ShiftType.defaults.count)

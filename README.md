@@ -13,6 +13,19 @@ An iPhone app for police shift rotas. Set up any repeating pattern once and see 
 
 Everything is stored on the phone. Nothing is sent anywhere.
 
+## Help, feedback and paying
+
+- **Help tip** pops up every time the app opens until you tick "Don't show this again". It points to **Settings › How to use this app**, a step-by-step guide with pictures.
+- **Report a problem** opens an email to `AppInfo.supportEmail` with the app version and iOS version filled in.
+- **Rate us** opens the App Store review page once `AppInfo.appStoreID` is filled in (`ShiftCalendar/App/AppInfo.swift`). Until then it shows Apple's built-in rating pop-up.
+- **Free month, then £4.99 once.** No ads, no subscription. The trial start date is kept in the Keychain, so deleting and reinstalling doesn't reset it. After 30 days a "Your free month is up" screen asks for the one-off payment. Product ID: `com.mattlakin.ShiftCalendar.fullunlock` (a Non-Consumable in App Store Connect).
+
+### Testing the purchase in Xcode
+
+1. Product › Scheme › Edit Scheme… › Run › Options.
+2. Set **StoreKit Configuration** to `ShiftCalendar.storekit`.
+3. Run the app, then use Settings › Developer › **End free trial now** to see the paywall. That Developer section only appears in test builds, never in the App Store version.
+
 ## Running it on your iPhone
 
 You need a Mac with Xcode 16 or newer.

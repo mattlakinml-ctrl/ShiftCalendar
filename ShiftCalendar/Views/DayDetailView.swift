@@ -6,7 +6,7 @@ import SwiftUI
 struct DayDetailView: View {
     let day: DayKey
 
-    @Environment(AppStore.self) private var store
+    @Environment(ShiftStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var note = ""
 
