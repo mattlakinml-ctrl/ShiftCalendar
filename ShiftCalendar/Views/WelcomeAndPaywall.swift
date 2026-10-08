@@ -10,71 +10,72 @@ struct WelcomeTipView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "questionmark.bubble.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(.blue)
-                .padding(.top, 28)
+        ScrollView {
+            VStack(spacing: 20) {
+                Image(systemName: "questionmark.bubble.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.blue)
+                    .padding(.top, 28)
 
-            Text("Need a hand?")
-                .font(.title.bold())
+                Text("Need a hand?")
+                    .font(.title.bold())
 
-            VStack(spacing: 8) {
-                Text("If you get stuck, tap the cog at the top right")
-                Image(systemName: "gearshape.fill")
-                    .font(.title)
-                    .foregroundStyle(.secondary)
-                Text("then tap **How to use this app**.")
-            }
-            .font(.title3)
-            .multilineTextAlignment(.center)
-
-            if !purchases.isUnlocked {
-                Text("Free for \(PurchaseManager.trialDays) days, then \(purchases.priceText) once to keep using it. No subscription, no ads.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                Text("Tap **Start** for a quick guide. You can find it again any time: tap the cog at the top right, then **How to use this app**.")
+                    .font(.title3)
                     .multilineTextAlignment(.center)
-            }
+                    .fixedSize(horizontal: false, vertical: true)
 
-            Button {
-                dontShowAgain.toggle()
-            } label: {
-                HStack(spacing: 10) {
-                    Image(systemName: dontShowAgain ? "checkmark.square.fill" : "square")
-                        .font(.title2)
-                        .foregroundStyle(dontShowAgain ? Color.blue : Color.secondary)
-                    Text("Don't show this again")
-                        .foregroundStyle(.primary)
+                if !purchases.isUnlocked {
+                    Text("Free for \(PurchaseManager.trialDays) days, then \(purchases.priceText) once to keep using it. No subscription, no ads.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-            }
-            .buttonStyle(.plain)
 
-            VStack(spacing: 10) {
                 Button {
-                    close()
+                    dontShowAgain.toggle()
                 } label: {
-                    Text("Got it")
-                        .font(.headline)
+                    HStack(spacing: 10) {
+                        Image(systemName: dontShowAgain ? "checkmark.square.fill" : "square")
+                            .font(.title2)
+                            .foregroundStyle(dontShowAgain ? Color.blue : Color.secondary)
+                        Text("Don't show this again")
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    dismiss()
+                    onShowGuide()
+                } label: {
+                    Text("Start")
+                        .font(.title3.bold())
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 8)
                 }
                 .buttonStyle(.borderedProminent)
-
-                Button("Show me the guide now") {
-                    close()
-                    onShowGuide()
-                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
+            .padding()
         }
-        .padding()
-        .presentationDetents([.medium, .large])
-        .interactiveDismissDisabled()
-    }
-
-    private func close() {
-        if dontShowAgain { hideWelcomeTip = true }
-        dismiss()
+        .overlay(alignment: .topTrailing) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.secondary)
+            }
+            .padding()
+            .accessibilityLabel("Close")
+        }
+        .presentationDetents([.large])
+        .onDisappear {
+            if dontShowAgain { hideWelcomeTip = true }
+        }
     }
 }
 
