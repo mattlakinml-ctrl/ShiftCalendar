@@ -40,34 +40,23 @@ struct DayDetailView: View {
                 }
 
                 Section("Change this day") {
-                    Button {
-                        store.setOverride(nil, on: day)
+                    Picker(selection: Binding<UUID?>(
+                        get: { resolved.overrideShiftID },
+                        set: { store.setOverride($0, on: day) }
+                    )) {
+                        Text("Follow the rota (\(store.shiftType(resolved.rotaShiftID)?.name ?? "nothing set"))")
+                            .tag(UUID?.none)
+                        Divider()
+                        ForEach(store.data.shiftTypes) { type in
+                            Text(type.name).tag(Optional(type.id))
+                        }
                     } label: {
-                        HStack {
-                            ShiftBadge(type: store.shiftType(resolved.rotaShiftID), size: 26)
-                            Text("Follow the rota")
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            if resolved.overrideShiftID == nil {
-                                Image(systemName: "checkmark").fontWeight(.semibold)
-                            }
+                        HStack(spacing: 10) {
+                            ShiftBadge(type: current, size: 26)
+                            Text("Shift")
                         }
                     }
-                    ForEach(store.data.shiftTypes) { type in
-                        Button {
-                            store.setOverride(type.id, on: day)
-                        } label: {
-                            HStack {
-                                ShiftBadge(type: type, size: 26)
-                                Text(type.name)
-                                    .foregroundStyle(.primary)
-                                Spacer()
-                                if resolved.overrideShiftID == type.id {
-                                    Image(systemName: "checkmark").fontWeight(.semibold)
-                                }
-                            }
-                        }
-                    }
+                    .pickerStyle(.menu)
                 }
 
                 Section("Note") {
