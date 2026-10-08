@@ -18,6 +18,8 @@ struct CalendarScreen: View {
     @State private var newRota: Rota?
     @State private var showWelcome = false
     @State private var showGuide = false
+    @State private var pulseSetup = false
+    @State private var pulsePhase = false
     @State private var guideRequested = false
 
     var body: some View {
@@ -87,7 +89,9 @@ struct CalendarScreen: View {
             }) {
                 WelcomeTipView { guideRequested = true }
             }
-            .sheet(isPresented: $showGuide) {
+            .sheet(isPresented: $showGuide, onDismiss: {
+                if store.data.rotas.isEmpty { pulseSetup = true }
+            }) {
                 NavigationStack {
                     HelpGuideView()
                         .toolbar {
@@ -127,6 +131,7 @@ struct CalendarScreen: View {
 
     private var setupBanner: some View {
         Button {
+            pulseSetup = false
             newRota = Rota.newDraft(using: store)
         } label: {
             HStack {
@@ -137,11 +142,31 @@ struct CalendarScreen: View {
                 Image(systemName: "chevron.right")
             }
             .padding(12)
-            .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+            .background(
+                Color.accentColor.opacity(pulseSetup && pulsePhase ? 0.4 : 0.15),
+                in: RoundedRectangle(cornerRadius: 12)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Color.accentColor.opacity(pulseSetup && pulsePhase ? 0.9 : 0), lineWidth: 2)
+            )
+            .scaleEffect(pulseSetup && pulsePhase ? 1.02 : 1)
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 10)
         .padding(.top, 8)
+        .onChange(of: pulseSetup) { _, pulsing in
+            if pulsing {
+                // A gentle, repeating glow to show where to go next.
+                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                    pulsePhase = true
+                }
+            } else {
+                var t = Transaction()
+                t.disablesAnimations = true
+                withTransaction(t) { pulsePhase = false }
+            }
+        }
     }
 
     private var jumpSheet: some View {

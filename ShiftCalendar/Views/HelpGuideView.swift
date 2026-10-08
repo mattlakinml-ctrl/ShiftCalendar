@@ -54,7 +54,7 @@ struct HelpGuideView: View {
                 }
 
                 HelpStep(number: 7, title: "Dots = your other plans",
-                         text: "A small dot means something is in your iPhone calendar that day, like the dentist.\nTap the day to see what it is.") {
+                         text: "A small dot means something is in your Apple or Google calendar that day, such as the dentist.\nTap the day to see what it is.") {
                     MockWeek(codes: ["N", "RD", "RD"], dotIndex: 2)
                 }
 
